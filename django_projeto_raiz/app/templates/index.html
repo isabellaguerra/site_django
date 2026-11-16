@@ -1,0 +1,35 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Home | Django{% endblock %}
+
+{% block conteudo %}
+<div class="estreito">
+    <section class="hero">
+        <small>PYTHON WEB FRAMEWORK</small>
+        <h1>Bem-vindo ao mundo Django!</h1>
+        <p>Desenvolva aplicações web modernas, seguras e escaláveis utilizando um dos frameworks Python mais populares do mundo.</p>
+        <a class="btn" href="https://www.djangoproject.com/" target="_blank" rel="noopener">Conheça o Django</a>
+    </section>
+
+    <section class="bloco-texto">
+        <h2>O que é Django?</h2>
+        <p>Django é um framework web de alto nível escrito em Python, criado para facilitar o desenvolvimento rápido, seguro e organizado de aplicações para a internet.</p>
+        <p>Ele oferece diversas ferramentas prontas, permitindo que desenvolvedores concentrem seus esforços na criação de funcionalidades, sem precisar construir tudo do zero.</p>
+    </section>
+
+    <section class="bloco-texto">
+        <h2>Por que utilizar Django?</h2>
+        <div class="grade-2">
+            <div class="beneficio"><h3>Segurança</h3><p>Possui mecanismos que ajudam a proteger aplicações contra ataques comuns, como CSRF e SQL Injection.</p></div>
+            <div class="beneficio"><h3>Rapidez</h3><p>Oferece ferramentas integradas que aceleram o desenvolvimento de aplicações web.</p></div>
+            <div class="beneficio"><h3>Python</h3><p>Utiliza a linguagem Python, conhecida por sua simplicidade, legibilidade e versatilidade.</p></div>
+            <div class="beneficio"><h3>Administração</h3><p>Disponibiliza um painel administrativo automático para facilitar o gerenciamento dos dados.</p></div>
+        </div>
+    </section>
+
+    <div class="chamada">
+        <h3>Comece a desenvolver!</h3>
+        <p>Com Django, você tem uma base poderosa para transformar ideias em aplicações web completas.</p>
+    </div>
+</div>
+{% endblock %}

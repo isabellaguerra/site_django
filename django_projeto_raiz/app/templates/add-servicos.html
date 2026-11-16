@@ -1,0 +1,20 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Novo Serviço | Django{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+    <h1>Cadastrar Serviço</h1>
+    <p>Preencha as informações abaixo para adicionar um serviço ao catálogo.</p>
+</div>
+<div class="cartao form-cartao largo">
+    <h2>Informações do Serviço</h2>
+    <p class="sub">Informe os dados necessários para cadastrar o serviço.</p>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {% include '_campos_servico.html' %}
+        <button type="submit" class="btn btn-bloco">Cadastrar Serviço</button>
+        <a class="btn btn-claro btn-bloco" style="margin-top:8px" href="{% url 'servicos' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

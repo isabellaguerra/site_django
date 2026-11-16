@@ -1,0 +1,28 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Novo Integrante | Django{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+    <h1>Novo Integrante</h1>
+    <p>Cadastre um novo integrante e apresente sua função e contribuição para nossa equipe.</p>
+</div>
+<div class="cartao form-cartao">
+    <h2>Informações do integrante</h2>
+    <p class="sub">Preencha os dados abaixo para realizar o cadastro.</p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="campo"><label for="nome">Nome completo</label>
+            <input type="text" name="nome" id="nome" value="{{ dados.nome }}" placeholder="Digite o nome do integrante" required></div>
+        <div class="campo"><label for="cargo">Cargo</label>
+            <input type="text" name="cargo" id="cargo" value="{{ dados.cargo }}" placeholder="Ex.: Desenvolvedor Web" required></div>
+        <div class="campo"><label for="biografia">Biografia</label>
+            <textarea name="biografia" id="biografia" rows="4" placeholder="Conte um pouco sobre o integrante..." required>{{ dados.biografia }}</textarea></div>
+        <div class="campo"><label for="foto">Foto (URL)</label>
+            <input type="url" name="foto" id="foto" value="{{ dados.foto }}" placeholder="https://exemplo.com/foto.jpg">
+            <div class="ajuda">Informe o endereço de uma imagem pública.</div></div>
+        <button type="submit" class="btn btn-bloco">Cadastrar Integrante</button>
+        <a class="btn btn-claro btn-bloco" style="margin-top:8px" href="{% url 'integrantes' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

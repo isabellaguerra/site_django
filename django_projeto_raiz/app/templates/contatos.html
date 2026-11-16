@@ -1,0 +1,42 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Contatos | Django{% endblock %}
+
+{% block conteudo %}
+<div class="linha-titulo">
+    <div>
+        <h1>Nossos Contatos</h1>
+        <p>Consulte e gerencie as mensagens recebidas através do formulário de contato.</p>
+    </div>
+    <div class="estat estat-escura"><small>Total de contatos</small><strong>{{ contatos|length }}</strong></div>
+</div>
+
+<div class="cartao">
+    <h2>Lista de contatos</h2>
+    <p class="sub">Contatos recebidos pela plataforma.</p>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Mensagem</th><th>Ação</th></tr></thead>
+            <tbody>
+                {% for contato in contatos %}
+                    <tr>
+                        <td><strong>{{ contato.nome }}</strong></td>
+                        <td>{{ contato.email }}</td>
+                        <td>{{ contato.telefone }}</td>
+                        <td>{{ contato.mensagem }}</td>
+                        <td>
+                            <form class="form-inline" method="post" action="{% url 'del_contato' contato.id %}" onsubmit="return confirm('Excluir este contato?');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-perigo btn-peq">Excluir</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="vazio">Nenhum contato enviado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<a class="voltar" href="{% url 'dashboard' %}">Voltar ao dashboard</a>
+{% endblock %}

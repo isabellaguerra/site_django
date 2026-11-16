@@ -1,0 +1,44 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Equipe | Django{% endblock %}
+
+{% block conteudo %}
+<div class="cartao">
+    <div class="linha-titulo" style="margin-bottom:14px">
+        <div>
+            <h1 style="font-size:1.3rem">Gerenciar Integrantes</h1>
+            <p>Cadastre, consulte, edite e exclua os integrantes.</p>
+        </div>
+        <a class="btn" href="{% url 'addIntegrante' %}">+ Novo Integrante</a>
+    </div>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>ID</th><th>Foto</th><th>Nome</th><th>Cargo</th><th>Biografia</th><th>Ações</th></tr></thead>
+            <tbody>
+                {% for integrante in integrantes %}
+                    <tr>
+                        <td>{{ integrante.id }}</td>
+                        <td>{% if integrante.foto_url %}<img class="avatar" src="{{ integrante.foto_url }}" alt="">{% endif %}</td>
+                        <td><strong>{{ integrante.nome }}</strong></td>
+                        <td>{{ integrante.cargo }}</td>
+                        <td>{{ integrante.biografia }}</td>
+                        <td>
+                            <div class="acoes">
+                                <a class="btn btn-claro btn-peq" href="{% url 'editIntegrante' integrante.id %}">Editar</a>
+                                <form class="form-inline" method="post" action="{% url 'delIntegrante' integrante.id %}" onsubmit="return confirm('Excluir este integrante?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-perigo btn-peq">Excluir</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="6" class="vazio">Nenhum integrante cadastrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <p class="sub" style="margin:14px 0 0">Total de integrantes cadastrados: <strong>{{ integrantes|length }}</strong></p>
+</div>
+<a class="voltar" href="{% url 'dashboard' %}">Voltar ao dashboard</a>
+{% endblock %}

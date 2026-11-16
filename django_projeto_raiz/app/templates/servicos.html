@@ -1,0 +1,91 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Serviços | Django{% endblock %}
+
+{% block conteudo %}
+<div class="linha-titulo">
+    <div>
+        <h1>Gerenciamento de Serviços</h1>
+        <p>Gerencie, consulte e acompanhe seus serviços.</p>
+    </div>
+    <a class="btn" href="{% url 'addServicos' %}">+ Novo Serviço</a>
+</div>
+
+<div class="estatisticas">
+    <div class="estat"><small>Total de serviços</small><strong>{{ total_servicos }}</strong></div>
+    <div class="estat"><small>Menor preço</small><strong>{% if mais_barato is not None %}R$ {{ mais_barato|floatformat:2 }}{% else %}—{% endif %}</strong></div>
+    <div class="estat"><small>Maior preço</small><strong>{% if mais_caro is not None %}R$ {{ mais_caro|floatformat:2 }}{% else %}—{% endif %}</strong></div>
+    <div class="estat"><small>Ativos</small><strong>{{ total_ativos }} de {{ total_servicos }}</strong></div>
+</div>
+
+<div class="cartao filtros">
+    <h3>Filtros e pesquisas</h3>
+    <p class="sub">Encontre rapidamente o serviço desejado.</p>
+    <form class="busca" method="get">
+        {% if categoria %}<input type="hidden" name="categoria" value="{{ categoria }}">{% endif %}
+        {% if preco %}<input type="hidden" name="preco" value="{{ preco }}">{% endif %}
+        {% if ordem %}<input type="hidden" name="ordem" value="{{ ordem }}">{% endif %}
+        <input type="text" name="busca" value="{{ busca }}" placeholder="Pesquisar serviço pelo nome...">
+        <button class="btn btn-peq" type="submit">Buscar</button>
+    </form>
+
+    <div class="grupo"><strong>Filtrar por categoria</strong>
+        <div class="chips">
+            {% for cat in chips_categoria %}
+                <a class="chip {% if cat.ativo %}ativo{% endif %}" href="{{ cat.url }}">{{ cat.nome }}</a>
+            {% empty %}
+                <span class="sub" style="margin:0">Nenhuma categoria ativa.</span>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="grupo"><strong>Filtrar por preço</strong>
+        <div class="chips">
+            <a class="chip {% if preco == 'baixo' %}ativo{% endif %}" href="{{ url_preco.baixo }}">Até R$ 500</a>
+            <a class="chip {% if preco == 'medio' %}ativo{% endif %}" href="{{ url_preco.medio }}">R$ 500 – R$ 1.500</a>
+            <a class="chip {% if preco == 'alto' %}ativo{% endif %}" href="{{ url_preco.alto }}">Acima de R$ 1.500</a>
+        </div>
+    </div>
+    <div class="grupo"><strong>Ordenar serviços</strong>
+        <div class="chips">
+            <a class="chip {% if ordem == 'menor' %}ativo{% endif %}" href="{{ url_ordem_menor }}">Menor preço</a>
+            <a class="chip {% if ordem == 'maior' %}ativo{% endif %}" href="{{ url_ordem_maior }}">Maior preço</a>
+            <a class="chip {% if ordem == 'nome' %}ativo{% endif %}" href="{{ url_ordem_nome }}">Nome</a>
+            <a class="chip limpar" href="{% url 'servicos' %}">Limpar filtros</a>
+        </div>
+    </div>
+</div>
+
+<div class="cartao" style="margin-top:18px">
+    <h2>Serviços cadastrados</h2>
+    <p class="sub">Lista de serviços disponíveis no sistema.</p>
+    <div class="tabela-wrap">
+        <table>
+            <thead><tr><th>Imagem</th><th>Serviço</th><th>Categoria</th><th>Descrição</th><th>Preço</th><th>Situação</th><th>Ações</th></tr></thead>
+            <tbody>
+                {% for servico in servicos %}
+                    <tr>
+                        <td>{% if servico.imagem %}<img class="mini" src="{{ servico.imagem.url }}" alt="">{% endif %}</td>
+                        <td><strong>{{ servico.nome }}</strong></td>
+                        <td>{{ servico.categoria|default:"—" }}</td>
+                        <td>{{ servico.descricao|truncatechars:40 }}</td>
+                        <td><strong>R$ {{ servico.preco }}</strong></td>
+                        <td>{% if servico.ativo %}Ativo{% else %}Inativo{% endif %}</td>
+                        <td>
+                            <div class="acoes">
+                                <a class="btn btn-claro btn-peq" href="{% url 'editServicos' servico.id %}">Editar</a>
+                                <form class="form-inline" method="post" action="{% url 'delServicos' servico.id %}" onsubmit="return confirm('Excluir este serviço?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-perigo btn-peq">Excluir</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="7" class="vazio">Nenhum serviço encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+<a class="voltar" href="{% url 'dashboard' %}">Voltar ao dashboard</a>
+{% endblock %}

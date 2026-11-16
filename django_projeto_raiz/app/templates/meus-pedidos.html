@@ -1,0 +1,38 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Meus Pedidos | Django{% endblock %}
+
+{% block conteudo %}
+<div class="estreito">
+    <div class="linha-titulo">
+        <div>
+            <h1>Meus Pedidos</h1>
+            <p>Acompanhe os serviços que você adquiriu.</p>
+        </div>
+        <a class="btn" href="{% url 'produtos' %}">Continuar comprando</a>
+    </div>
+
+    {% for pedido in pedidos %}
+        <div class="pedido">
+            {% if pedido.servico and pedido.servico.imagem %}
+                <img src="{{ pedido.servico.imagem.url }}" alt="">
+            {% else %}
+                <div class="sem-img"></div>
+            {% endif %}
+            <div class="info">
+                <h3>{{ pedido.nome }}</h3>
+                {% if pedido.servico %}<p>{{ pedido.servico.descricao|truncatechars:60 }}</p>{% endif %}
+                <small>Comprado em: {{ pedido.criado_em|date:"d/m/Y H:i" }}</small>
+            </div>
+            <div class="valor"><small style="display:block;font-weight:400;color:var(--suave)">Valor</small>R$ {{ pedido.preco }}</div>
+        </div>
+    {% empty %}
+        <div class="cartao vazio">Você ainda não fez nenhum pedido. <a href="{% url 'produtos' %}"><strong>Ver produtos</strong></a></div>
+    {% endfor %}
+
+    {% if pedidos %}
+        <div class="total-pedidos"><span>Total das compras</span><span>R$ {{ total }}</span></div>
+    {% endif %}
+</div>
+<a class="voltar" href="{% url 'dashboard' %}">Voltar ao dashboard</a>
+{% endblock %}

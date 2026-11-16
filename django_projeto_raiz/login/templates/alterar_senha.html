@@ -1,0 +1,28 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Alterar Senha | Django{% endblock %}
+
+{% block conteudo %}
+<div class="cabecalho">
+    <h1>Alterar Senha</h1>
+    <p>Atualize sua senha para manter sua conta protegida e segura.</p>
+</div>
+<div class="cartao form-cartao">
+    <h2>Nova senha</h2>
+    <p class="sub">Preencha os campos abaixo para alterar sua senha.</p>
+    <form method="post" novalidate>
+        {% csrf_token %}
+        {% for campo in form %}
+            <div class="campo">
+                <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+                {{ campo }}
+                {% for erro in campo.errors %}<div class="erro">{{ erro }}</div>{% endfor %}
+                {% if campo.help_text %}<div class="ajuda">{{ campo.help_text|safe }}</div>{% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-bloco">Alterar minha senha</button>
+    </form>
+    <p class="rodape-form"><strong style="color:var(--verde-escuro)">Recomendação de segurança</strong><br>Utilize uma senha forte, com letras, números e caracteres especiais.</p>
+</div>
+<a class="voltar" href="{% url 'perfil' %}">Voltar ao meu perfil</a>
+{% endblock %}

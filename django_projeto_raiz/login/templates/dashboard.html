@@ -1,0 +1,25 @@
+{% extends 'template.html' %}
+
+{% block titulo %}Dashboard | Django{% endblock %}
+
+{% block conteudo %}
+<div class="estreito">
+    <section class="painel">
+        <small>PAINEL DO USUÁRIO</small>
+        <h1>Olá, {{ user.first_name|default:user.username }}!</h1>
+        <p>Bem-vindo ao seu painel de controle. Escolha uma das opções abaixo para continuar.</p>
+    </section>
+
+    <h2 class="secao-titulo">Meu espaço</h2>
+    <p class="secao-sub">Gerencie suas informações, acompanhe seus pedidos e acesse as funcionalidades disponíveis na plataforma.</p>
+
+    <div class="atalhos">
+        <a class="atalho" href="{% url 'perfil' %}"><small>MINHA CONTA</small><h3>Editar Perfil</h3><p>Consulte e atualize seus dados pessoais, informações e preferências.</p><span>Acessar perfil →</span></a>
+        <a class="atalho" href="{% url 'contatos' %}"><small>COMUNICAÇÃO</small><h3>Contatos</h3><p>Consulte e gerencie os contatos cadastrados na plataforma.</p><span>Gerenciar contatos →</span></a>
+        <a class="atalho" href="{% url 'servicos' %}"><small>GERENCIAMENTO</small><h3>Serviços</h3><p>Cadastre, consulte e gerencie os serviços disponíveis no sistema.</p><span>Gerenciar serviços →</span></a>
+        <a class="atalho" href="{% url 'integrantes' %}"><small>NOSSA EQUIPE</small><h3>Equipe</h3><p>Gerencie os integrantes, cargos, biografias e informações da equipe.</p><span>Gerenciar equipe →</span></a>
+        <a class="atalho" href="{% url 'meus_pedidos' %}"><small>MINHAS COMPRAS</small><h3>Meus Pedidos</h3><p>Consulte seus serviços adquiridos, acompanhe suas compras e visualize os valores.</p><span>Visualizar pedidos →</span></a>
+        <a class="atalho" href="{% url 'relatorios' %}"><small>ANÁLISES</small><h3>Relatórios</h3><p>Consulte informações, dados e estatísticas sobre os serviços e pedidos da plataforma.</p><span>Acessar relatórios →</span></a>
+    </div>
+</div>
+{% endblock %}

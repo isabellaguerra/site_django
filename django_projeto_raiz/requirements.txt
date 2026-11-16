@@ -1,0 +1,10 @@
+Django
+djangorestframework
+python-dotenv
+supabase
+requests
+Pillow
+gunicorn
+whitenoise
+dj-database-url
+psycopg[binary]

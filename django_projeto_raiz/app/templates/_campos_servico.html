@@ -1,0 +1,12 @@
+{% if form.non_field_errors %}<div class="erro-geral">{{ form.non_field_errors }}</div>{% endif %}
+{% for campo in form %}
+    {% if campo.name == "ativo" %}
+        <label class="campo-check">{{ campo }} {{ campo.label }}</label>
+    {% else %}
+        <div class="campo">
+            <label for="{{ campo.id_for_label }}">{{ campo.label }}</label>
+            {{ campo }}
+            {% for erro in campo.errors %}<div class="erro">{{ erro }}</div>{% endfor %}
+        </div>
+    {% endif %}
+{% endfor %}
