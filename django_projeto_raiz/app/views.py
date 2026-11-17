@@ -59,9 +59,9 @@ def _normalizar_produtos(dados):
 
 
 def _buscar_produtos():
-    """Devolve (lista_de_produtos, lista_de_motivos_das_falhas)."""
+    """Devolve (produtos, motivos_das_falhas, usou_api_original)."""
     motivos = []
-    for url in APIS_PRODUTOS:
+    for posicao, url in enumerate(APIS_PRODUTOS):
         site = url.split("/")[2]
         try:
             resposta = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
@@ -69,24 +69,30 @@ def _buscar_produtos():
             resposta.raise_for_status()
             lista = _normalizar_produtos(resposta.json())
             if lista:
-                return lista, motivos
+                return lista, motivos, posicao == 0
             motivos.append(f"{site}: respondeu, mas sem produtos")
         except (requests.RequestException, ValueError) as erro:
             print("ERRO API PRODUTOS:", url, repr(erro), flush=True)
             motivos.append(f"{site}: {type(erro).__name__} {str(erro)[:120]}")
-    return [], motivos
+    return [], motivos, False
 
 
 def produtos(request):
     servicos = Servico.objects.filter(ativo=True).order_by("nome")
-    produtos_api, motivos = _buscar_produtos()
+    produtos_api, motivos, usou_original = _buscar_produtos()
     if not produtos_api:
         messages.warning(
             request,
             "Os produtos das lojas parceiras estão indisponíveis no momento. "
             "Detalhes: " + " | ".join(motivos),
         )
-    return render(request, "produtos.html", {"servicos": servicos, "produtos_api": produtos_api})
+    return render(request, "produtos.html", {
+        "servicos": servicos,
+        "produtos_api": produtos_api,
+        # se o servidor não conseguiu a API original, o navegador tenta buscá-la
+        "buscar_no_navegador": not usou_original,
+        "api_original_url": API_PRODUTOS_URL,
+    })
 
 
 def add_contato(request):
