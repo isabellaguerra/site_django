@@ -15,7 +15,12 @@ from .models import Categoria, Contato, Pedido, Servico
 from .serializers import CategoriaSerializer
 from .supabase_client import get_supabase
 
+# Tenta a primeira API; se falhar ou vier vazia, usa a próxima.
 API_PRODUTOS_URL = "https://fakestoreapi.com/products"
+APIS_PRODUTOS = [
+    API_PRODUTOS_URL,
+    "https://dummyjson.com/products?limit=20",
+]
 
 
 # ---------------------------------------------------------------- páginas públicas
@@ -37,17 +42,50 @@ def quem_somos(request):
     return render(request, "quem-somos.html", {"integrantes": _listar_integrantes(request)})
 
 
+def _normalizar_produtos(dados):
+    """Aceita os dois formatos (lista direta ou {"products": [...]}) e padroniza os campos."""
+    lista = dados.get("products", []) if isinstance(dados, dict) else dados
+    produtos_normalizados = []
+    for p in lista or []:
+        if not isinstance(p, dict):
+            continue
+        produtos_normalizados.append({
+            "title": p.get("title", ""),
+            "description": p.get("description", ""),
+            "price": p.get("price", 0),
+            "image": p.get("image") or p.get("thumbnail", ""),
+        })
+    return produtos_normalizados
+
+
+def _buscar_produtos():
+    """Devolve (lista_de_produtos, lista_de_motivos_das_falhas)."""
+    motivos = []
+    for url in APIS_PRODUTOS:
+        site = url.split("/")[2]
+        try:
+            resposta = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+            print("API PRODUTOS ->", url, resposta.status_code, resposta.text[:120], flush=True)
+            resposta.raise_for_status()
+            lista = _normalizar_produtos(resposta.json())
+            if lista:
+                return lista, motivos
+            motivos.append(f"{site}: respondeu, mas sem produtos")
+        except (requests.RequestException, ValueError) as erro:
+            print("ERRO API PRODUTOS:", url, repr(erro), flush=True)
+            motivos.append(f"{site}: {type(erro).__name__} {str(erro)[:120]}")
+    return [], motivos
+
+
 def produtos(request):
     servicos = Servico.objects.filter(ativo=True).order_by("nome")
-
-    try:
-        resposta = requests.get(API_PRODUTOS_URL, timeout=8)
-        resposta.raise_for_status()
-        produtos_api = resposta.json()
-    except (requests.RequestException, ValueError):
-        produtos_api = []
-        messages.warning(request, "Os produtos das lojas parceiras estão indisponíveis no momento.")
-
+    produtos_api, motivos = _buscar_produtos()
+    if not produtos_api:
+        messages.warning(
+            request,
+            "Os produtos das lojas parceiras estão indisponíveis no momento. "
+            "Detalhes: " + " | ".join(motivos),
+        )
     return render(request, "produtos.html", {"servicos": servicos, "produtos_api": produtos_api})
 
 
